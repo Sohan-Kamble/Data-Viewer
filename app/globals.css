@@ -2,20 +2,106 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Customizing the root variables for themes */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f9fafb; /* Light gray */
+  --foreground: #111827; /* Neutral black */
+  --primary: #3b82f6;    /* Blue for buttons, highlights */
+  --secondary: #64748b;  /* Muted gray-blue for text */
+  --accent: #10b981;     /* Green for success indicators */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #111827; /* Neutral black */
+    --foreground: #f9fafb; /* Off-white */
+    --primary: #3b82f6;    /* Blue */
+    --secondary: #94a3b8;  /* Light gray-blue */
+    --accent: #22c55e;     /* Green */
   }
 }
 
+/* Tailwind Preflight Additions */
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply text-foreground bg-background font-sans leading-relaxed;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Utility Styles */
+.container {
+  @apply mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl;
+}
+
+.header {
+  @apply text-xl font-bold text-primary mb-4;
+}
+
+.button {
+  @apply inline-block px-6 py-3 bg-primary text-white font-medium rounded-lg shadow-md hover:bg-blue-700 transition-all duration-300 ease-in-out;
+}
+
+.button-secondary {
+  @apply inline-block px-6 py-3 bg-secondary text-white font-medium rounded-lg shadow-md hover:bg-gray-700 transition-all duration-300 ease-in-out;
+}
+
+.table {
+  @apply w-full border-collapse bg-white shadow rounded-lg overflow-hidden;
+}
+
+.table th,
+.table td {
+  @apply border px-6 py-4 text-sm text-left;
+}
+
+.table th {
+  @apply bg-secondary text-white font-bold;
+}
+
+.table tr:nth-child(even) {
+  @apply bg-gray-100;
+}
+
+.table tr:hover {
+  @apply bg-primary text-white;
+}
+
+/* Responsiveness */
+@layer utilities {
+  .responsive {
+    @apply flex flex-wrap gap-4 justify-center;
+  }
+
+  .card {
+    @apply bg-white rounded-lg shadow-lg p-6 transition-all hover:shadow-xl;
+  }
+
+  .dark .card {
+    @apply bg-gray-800 text-gray-300;
+  }
+}
+
+/* Forms */
+.input {
+  @apply w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
+}
+
+.label {
+  @apply block text-sm font-medium text-secondary mb-2;
+}
+
+.error-text {
+  @apply text-sm text-red-500 mt-1;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  @apply w-2;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-primary rounded-full;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
 }
