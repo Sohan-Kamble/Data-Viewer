@@ -11,6 +11,7 @@
   --accent: #10b981;     /* Green for success indicators */
 }
 
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #111827; /* Neutral black */

@@ -70,7 +70,6 @@ export default function Home() {
                 {/* Filter by Serial Number: */}
                 <input
                   type="text"
-                  color="black"
                   name="serialNumber"
                   placeholder="Enter Serial Number"
                   className="filter-input"

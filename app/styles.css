@@ -119,31 +119,43 @@
   
   /* Filters Section */
   .filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    margin-bottom: 20px;
+      display: flex;
+      justify-content: flex-start;
+      /* Align filters to the left */
+      align-items: center;
+      /* Align vertically */
+      gap: 20px;
+      /* Add spacing between filters */
+      margin-bottom: 20px;
+      /* Add space below the filters */
+      padding: 10px;
+      background-color: var(--background);
+      /* Ensure filters area has consistent background */
+      border-radius: 8px;
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+      /* Subtle shadow for separation */
   }
-  
-  .filter-input,
-  .filter-select {
-    padding: 10px;
-    border: 1px solid var(--secondary);
-    border-radius: 6px;
-    font-size: 14px;
-    transition: border-color 0.3s ease;
+
+  .filter-input {
+      padding: 12px;
+      border: 1px solid var(--secondary);
+      border-radius: 8px;
+      width: 250px;
+      /* Increased width for better visibility */
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.3s;
   }
-  
-  .filter-input:focus,
-  .filter-select:focus {
-    outline: none;
-    border-color: var(--primary);
+
+  .filter-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 5px var(--primary);
   }
-  
-  .filter-input::placeholder,
-  .filter-select::placeholder {
-    color: var(--secondary);
-    font-style: italic;
+
+  .filter-label {
+      font-size: 14px;
+      font-weight: bold;
+      color: var(--secondary);
   }
   
   /* Responsive Design */
