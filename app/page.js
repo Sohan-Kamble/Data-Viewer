@@ -10,7 +10,7 @@ export default function Home() {
   const [filters, setFilters] = useState({ serialNumber: "", cellId: "" });
 
   const tables = [
-    "xxfmmfg_scada_operators_t",
+    "Table1",//xxfmmfg_scada_operators_t
     "xxfmmfg_scada_test_result_det",
     "xxfmmfg_scada_test_result_det_bkp",
     "xxfmmfg_ssd_test_results",
