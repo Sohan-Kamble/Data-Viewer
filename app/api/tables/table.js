@@ -84,7 +84,7 @@ export default function handler(req, res) {
   connection.connect((err) => {
     if (err) {
       console.error("Error connecting to MySQL:", err.message);
-      return res.status(500).json({ error: "Internal server error" });
+      return res.status(500).json({ error: "Internal server error", details: err.message });
     }
   });
 
@@ -93,21 +93,22 @@ export default function handler(req, res) {
     const query = `SELECT * FROM ??`;
     connection.query(query, [table], (error, results) => {
       if (error) {
-        console.error("Error fetching data from table:", error.message);
-        
+        console.error("Error fetching data from table:", error);
+
         if (error.code === "ER_NO_SUCH_TABLE") {
           return res.status(404).json({ error: "Table not found" });
         }
-        
-        return res.status(500).json({ error: "Internal server error" });
+
+        // Log more error details
+        return res.status(500).json({ error: "Internal server error", details: error.message });
       }
-      
+
       // Send the results back as JSON
       res.status(200).json(results);
     });
   } catch (error) {
     console.error("Unexpected error:", error.message);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Internal server error", details: error.message });
   } finally {
     connection.end(); // Close the connection
   }
