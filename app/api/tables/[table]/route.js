@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   }
 
   const allowedTables = [
-    "xxfmmfg_scada_operators_t11",
+    "xxfmmfg_scada_operators_t",
     "xxfmmfg_scada_test_result_det",
     "xxfmmfg_scada_test_result_det_bkp",
     "xxfmmfg_ssd_test_results",
