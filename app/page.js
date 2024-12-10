@@ -21,14 +21,19 @@ export default function Home() {
   ];
 
   const fetchTableData = async (table) => {
+    console.log(`Attempting to fetch data for table: ${table}`);
     setIsLoading(true);
     setError(null);
     try {
       const res = await fetch(`/api/tables/${table}`);
+      console.log(`Received response for table: ${table}, status: ${res.status}`);
+      
       if (!res.ok) {
         throw new Error(`Failed to fetch data for table: ${table}`);
       }
+
       const data = await res.json();
+      console.log(`Successfully fetched data for table: ${table}`, data);
       setTableData(data);
     } catch (err) {
       console.error("Error fetching table data:", err);
@@ -36,16 +41,19 @@ export default function Home() {
       setTableData([]);
     } finally {
       setIsLoading(false);
+      console.log('Data fetch operation complete.');
     }
   };
 
   const handleTableSelect = (table) => {
+    console.log(`Table selected: ${table}`);
     setSelectedTable(table);
     fetchTableData(table);
   };
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
+    console.log(`Filter changed: ${name} = ${value}`);
     setFilters({ ...filters, [name]: value });
   };
 
