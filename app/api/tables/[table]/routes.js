@@ -1,79 +1,48 @@
 import mysql from 'mysql2/promise';
 
-const dbConfig = {
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-};
+export default async function handler(req, res) {
+  const { table } = req.query;
 
-export async function GET(request, { params }) {
+  console.log(`API Request Received. Table: ${table}, Method: ${req.method}`);
+
+  // Validate the table parameter
+  if (!table) {
+    console.error('Table name is missing in the request');
+    return res.status(400).json({ error: 'Table name is required' });
+  }
+
+  // Connect to the database
   try {
-    // Check if the table parameter is provided
-    if (!params || !params.table) {
-      return new Response(
-        JSON.stringify({ error: 'Table parameter is missing' }),
-        { status: 400 }
-      );
-    }
+    console.log('Attempting to establish database connection...');
+    const connection = await mysql.createConnection({
+      host: 'YOUR_DB_HOST',
+      user: 'YOUR_DB_USER',
+      password: 'YOUR_DB_PASSWORD',
+      database: 'YOUR_DB_NAME',
+    });
 
-    const tableName = params.table;
+    console.log('Database connection established successfully.');
 
-    // Debugging the table name
-    console.log('Table requested:', tableName);
+    // Execute the query
+    const [rows] = await connection.query(`SELECT * FROM ??`, [table]);
+    console.log(`Query executed successfully for table: ${table}`, rows);
 
-    // Check if the table name is in the allowed list (if you want to restrict access)
-    const validTables = [
-      'xxfmmfg_scada_operators_t',
-      'xxfmmfg_scada_test_result_det',
-      'xxfmmfg_scada_test_result_det_bkp',
-      'xxfmmfg_ssd_test_results',
-      'xxfmmfg_trc_ssd_oracle_scada_t',
-      'xxfmmfg_trc_testing_parameters_t',
-    ];
-
-    if (!validTables.includes(tableName)) {
-      return new Response(
-        JSON.stringify({ error: 'Invalid table name' }),
-        { status: 400 }
-      );
-    }
-
-    console.log('Connecting to the database...');
-    const connection = await mysql.createConnection(dbConfig);
-    console.log('Database connection successful!');
-
-    // Safely execute the query with a LIMIT of 10 rows
-    const [rows] = await connection.execute(`SELECT * FROM ?? LIMIT 10`, [tableName]);
-
+    // Close the connection
     await connection.end();
     console.log('Database connection closed.');
 
-    return new Response(
-      JSON.stringify(rows),
-      { status: 200, headers: { 'Content-Type': 'application/json' } }
-    );
+    // Return the data
+    return res.status(200).json(rows);
   } catch (error) {
-    console.error('Error fetching data:', error);
-
-    if (error.code === 'ETIMEDOUT') {
-      return new Response(
-        JSON.stringify({ error: 'Database connection timed out' }),
-        { status: 500 }
-      );
+    console.error('Error occurred:', error.message);
+    
+    // Handle specific error scenarios
+    if (error.code === 'ER_NO_SUCH_TABLE') {
+      return res.status(404).json({ error: `Table "${table}" does not exist in the database.` });
+    } else if (error.code === 'ER_ACCESS_DENIED_ERROR') {
+      return res.status(403).json({ error: 'Database access denied. Check your credentials.' });
+    } else {
+      return res.status(500).json({ error: 'An unexpected error occurred while fetching the data.' });
     }
-
-    // Handle specific MySQL errors
-    if (error.code === 'ER_BAD_TABLE_ERROR') {
-      return new Response(
-        JSON.stringify({ error: 'Invalid table name' }),
-        { status: 400 }
-      );
-    }
-
-    return new Response(
-      JSON.stringify({ error: 'Internal Server Error' }),
-      { status: 500 }
-    );
   }
 }
