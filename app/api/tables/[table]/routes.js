@@ -15,10 +15,11 @@ export default async function handler(req, res) {
   try {
     console.log('Attempting to establish database connection...');
     const connection = await mysql.createConnection({
-      host: 'YOUR_DB_HOST',
-      user: 'YOUR_DB_USER',
-      password: 'YOUR_DB_PASSWORD',
-      database: 'YOUR_DB_NAME',
+      host: '144.13.1.11',
+      user: 'singssd',
+      password: 'singssd@123',
+      database: 'sing_ssd',
+
     });
 
     console.log('Database connection established successfully.');
