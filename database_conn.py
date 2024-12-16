@@ -1,38 +1,77 @@
+import tkinter as tk
+from tkinter import ttk
 import mysql.connector
-from mysql.connector import Error
+from tkinter import messagebox
 
-def connect_to_database():
+# Establish connection to the MySQL database
+def connect_to_db():
     try:
-        connection = mysql.connector.connect(
-            host='144.13.1.11',         
-            user='singssd',    
-            password='singssd@123', 
-            database='sing_ssd'  # Replace with your database name
-            
+        conn = mysql.connector.connect(
+            host='144.13.1.11', 
+            user='singssd',  
+            password='singssd@123',  
+            database='sing_ssd'  
         )
+        return conn
+    except mysql.connector.Error as err:
+        messagebox.showerror("Connection Error", f"Error: {err}")
+        return None
+
+# Fetch the names of all tables in the database
+def get_table_names(conn):
+    cursor = conn.cursor()
+    cursor.execute("SHOW TABLES")
+    tables = cursor.fetchall()
+    cursor.close()
+    return [table[0] for table in tables]
+
+# Fetch all rows from a selected table
+def get_table_data(conn, table_name):
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT * FROM {table_name}")
+    rows = cursor.fetchall()
+    columns = [desc[0] for desc in cursor.description]
+    cursor.close()
+    return columns, rows
+
+# Function to display data of selected table
+def display_table_data(root, table_name):
+    conn = connect_to_db()
+    if conn:
+        columns, rows = get_table_data(conn, table_name)
+        window = tk.Toplevel(root)
+        window.title(f"Data of {table_name}")
         
-        if connection.is_connected():
-            print("Connected to MySQL database")
-            
-            # Create a cursor object to interact with the database
-            cursor = connection.cursor()
-            
-            # Example query to fetch data
-            cursor.execute("SELECT * FROM xxfmmfg_trc_testing_parameters_t")  # Replace with your table name
-            rows = cursor.fetchall()
+        # Create a treeview widget to display data
+        tree = ttk.Treeview(window, columns=columns, show="headings")
+        for col in columns:
+            tree.heading(col, text=col)
+            tree.column(col, anchor="w")
+        tree.pack(expand=True, fill="both")
+        
+        # Insert rows into the treeview
+        for row in rows:
+            tree.insert("", "end", values=row)
+        
+        conn.close()
 
-            # Print the data
-            for row in rows:
-                print(row)
+# Function to create the main window and display table buttons
+def create_main_window():
+    root = tk.Tk()
+    root.title("Select a Table")
 
-    except Error as e:
-        print(f"Error connecting to MySQL: {e}")
+    conn = connect_to_db()
+    if conn:
+        table_names = get_table_names(conn)
+        conn.close()
 
-    finally:
-        if connection.is_connected():
-            cursor.close()
-            connection.close()
-            print("MySQL connection closed")
+        # Create a button for each table
+        for table in table_names:
+            button = tk.Button(root, text=table, command=lambda t=table: display_table_data(root, t))
+            button.pack(pady=5)
 
-# Run the function
-connect_to_database()
+    root.mainloop()
+
+# Start the program
+if __name__ == "__main__":
+    create_main_window()
